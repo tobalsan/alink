@@ -1,6 +1,6 @@
 import * as p from '@clack/prompts';
 import chalk from 'chalk';
-import { detectInstalledAgents, AGENTS } from './agents';
+import { detectInstalledAgents, getAllAgents } from './agents';
 import { discoverCommands, discoverSkills } from './discovery';
 import { createSymlinks } from './symlink';
 import { displayReport } from './utils';
@@ -135,7 +135,7 @@ export async function runInteractiveFlow(): Promise<void> {
     process.exit(0);
   }
 
-  const selectedAgents = AGENTS.filter(agent => selectedAgentNames.includes(agent.name));
+  const selectedAgents = getAllAgents().filter(agent => selectedAgentNames.includes(agent.name));
 
   // Step 4: Choose scope
   const scope = await p.select({

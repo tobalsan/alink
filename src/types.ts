@@ -31,3 +31,12 @@ export interface SymlinkResult {
   action: 'created' | 'skipped' | 'replaced' | 'error';
   error?: string;
 }
+
+export interface CustomAgentConfig {
+  name: string;
+  path: string;
+}
+
+export interface AlinkConfig {
+  customAgents?: CustomAgentConfig[];
+}

@@ -1,5 +1,6 @@
 import { existsSync } from 'fs';
 import { expandHome } from './utils';
+import { loadConfig } from './config';
 import type { Agent } from './types';
 
 export const AGENTS: Agent[] = [
@@ -212,6 +213,35 @@ export const AGENTS: Agent[] = [
   }
 ];
 
+function createCustomAgents(): Agent[] {
+  const config = loadConfig();
+  if (!config.customAgents) {
+    return [];
+  }
+
+  return config.customAgents.map(customAgent => {
+    const normalizedName = customAgent.name.toLowerCase().replace(/\s+/g, '-');
+    const basePath = customAgent.path;
+
+    return {
+      name: normalizedName,
+      displayName: customAgent.name,
+      projectCommandsDir: `.${normalizedName}/commands`,
+      projectSkillsDir: `.${normalizedName}/skills`,
+      globalCommandsDir: `${basePath}/commands`,
+      globalSkillsDir: `${basePath}/skills`,
+      detectInstalled: () => existsSync(expandHome(basePath))
+    };
+  });
+}
+
+export function getAllAgents(): Agent[] {
+  return [...AGENTS, ...createCustomAgents()];
+}
+
 export function detectInstalledAgents(): Agent[] {
-  return AGENTS.filter(agent => agent.detectInstalled());
+  const builtInAgents = AGENTS.filter(agent => agent.detectInstalled());
+  const customAgents = createCustomAgents().filter(agent => agent.detectInstalled());
+
+  return [...builtInAgents, ...customAgents];
 }
