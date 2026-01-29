@@ -45,7 +45,8 @@ bun run src/index.ts
 - Codex
 - Amp
 - Antigravity
-- Clawdbot
+- Moltbot
+- Clawdbot (legacy, only shown when Moltbot not installed)
 - Command Code
 - Droid
 - Gemini CLI
