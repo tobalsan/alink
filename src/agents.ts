@@ -59,23 +59,13 @@ export const AGENTS: Agent[] = [
     detectInstalled: () => existsSync(expandHome('~/.antigravity'))
   },
   {
-    name: 'moltbot',
-    displayName: 'Moltbot',
-    projectCommandsDir: '.moltbot/commands',
-    projectSkillsDir: '.moltbot/skills',
-    globalCommandsDir: '~/.moltbot/commands',
-    globalSkillsDir: '~/.moltbot/skills',
-    detectInstalled: () => existsSync(expandHome('~/.moltbot'))
-  },
-  {
-    name: 'clawdbot',
-    displayName: 'Clawdbot (legacy)',
-    projectCommandsDir: '.clawdbot/commands',
-    projectSkillsDir: '.clawdbot/skills',
-    globalCommandsDir: '~/.clawdbot/commands',
-    globalSkillsDir: '~/.clawdbot/skills',
-    // Only show Clawdbot when Moltbot isn't installed (legacy fallback)
-    detectInstalled: () => !existsSync(expandHome('~/.moltbot')) && existsSync(expandHome('~/.clawdbot'))
+    name: 'openclaw',
+    displayName: 'OpenClaw',
+    projectCommandsDir: '.openclaw/commands',
+    projectSkillsDir: '.openclaw/skills',
+    globalCommandsDir: '~/.openclaw/commands',
+    globalSkillsDir: '~/.openclaw/skills',
+    detectInstalled: () => existsSync(expandHome('~/.openclaw'))
   },
   {
     name: 'command-code',

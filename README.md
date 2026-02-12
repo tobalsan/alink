@@ -45,8 +45,7 @@ bun run src/index.ts
 - Codex
 - Amp
 - Antigravity
-- Moltbot
-- Clawdbot (legacy, only shown when Moltbot not installed)
+- OpenClaw
 - Command Code
 - Droid
 - Gemini CLI
