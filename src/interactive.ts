@@ -72,12 +72,44 @@ export async function runInteractiveFlow(): Promise<void> {
 
   // Select skills
   if (skills.length > 0) {
+    const skillFilter = await p.text({
+      message: 'Filter skills (optional):',
+      placeholder: 'Type to filter by name or description'
+    });
+
+    if (p.isCancel(skillFilter)) {
+      p.cancel('Operation cancelled');
+      process.exit(0);
+    }
+
+    const query = typeof skillFilter === 'string' ? skillFilter.trim().toLowerCase() : '';
+
+    let filteredSkills = query === ''
+      ? skills
+      : skills.filter(skill =>
+          skill.displayName.toLowerCase().includes(query) ||
+          skill.name.toLowerCase().includes(query) ||
+          skill.description.toLowerCase().includes(query)
+        );
+
+    if (filteredSkills.length === 0) {
+      p.log.warn('No skills matched filter. Showing all skills.');
+      filteredSkills = skills;
+    }
+
+    const skillEntries = filteredSkills.map((skill, idx) => ({ value: `skill:${idx}`, skill }));
+    const skillValueMap = new Map(skillEntries.map(({ value, skill }) => [value, skill] as const));
+
     const skillOptions = [
-      { value: '__all__', label: chalk.cyan('All skills'), hint: `${skills.length} total` },
-      ...skills.map(skill => ({
-        value: skill.name,
-        label: skill.displayName,
-        hint: skill.description
+      {
+        value: '__all__',
+        label: chalk.cyan(
+          `All skills (${filteredSkills.length} shown${filteredSkills.length !== skills.length ? `, ${skills.length} total` : ''})`
+        )
+      },
+      ...skillEntries.map(({ value, skill }) => ({
+        value,
+        label: skill.displayName
       }))
     ];
 
@@ -93,9 +125,11 @@ export async function runInteractiveFlow(): Promise<void> {
     }
 
     if (selectedSkills.includes('__all__')) {
-      selectedResources.push(...skills.map(skill => ({ type: 'skill' as const, resource: skill })));
+      selectedResources.push(...filteredSkills.map(skill => ({ type: 'skill' as const, resource: skill })));
     } else {
-      const selected = skills.filter(skill => selectedSkills.includes(skill.name));
+      const selected = selectedSkills
+        .map(value => skillValueMap.get(value))
+        .filter((skill): skill is Skill => skill !== undefined);
       selectedResources.push(...selected.map(skill => ({ type: 'skill' as const, resource: skill })));
     }
   }

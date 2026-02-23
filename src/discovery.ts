@@ -1,5 +1,5 @@
 import { readdirSync, statSync, readFileSync, existsSync } from 'fs';
-import { join } from 'path';
+import { basename, join, relative } from 'path';
 import { expandHome } from './utils';
 import type { Command, Skill } from './types';
 
@@ -40,22 +40,17 @@ export async function discoverSkills(): Promise<Skill[]> {
     return [];
   }
 
-  const dirs = readdirSync(skillsDir);
+  const dirs = findSkillDirs(skillsDir);
   const skills: Skill[] = [];
 
-  for (const dir of dirs) {
-    const dirPath = join(skillsDir, dir);
-    const stats = statSync(dirPath);
-
-    if (!stats.isDirectory()) continue;
-
+  for (const dirPath of dirs) {
     const skillMdPath = join(dirPath, 'SKILL.md');
-    if (!existsSync(skillMdPath)) continue;
-
     const frontmatter = await parseSkillFrontmatter(skillMdPath);
+    const relativePath = relative(skillsDir, dirPath);
+    const dir = basename(dirPath);
 
     skills.push({
-      name: dir,
+      name: relativePath,
       dirName: dir,
       displayName: frontmatter.name || dir,
       description: frontmatter.description || '',
@@ -86,4 +81,24 @@ async function parseSkillFrontmatter(path: string): Promise<{ name: string; desc
   } catch {
     return { name: '', description: '' };
   }
+}
+
+function findSkillDirs(rootDir: string): string[] {
+  const found: string[] = [];
+  const dirs = readdirSync(rootDir);
+
+  for (const dir of dirs) {
+    const dirPath = join(rootDir, dir);
+    const stats = statSync(dirPath);
+
+    if (!stats.isDirectory()) continue;
+
+    if (existsSync(join(dirPath, 'SKILL.md'))) {
+      found.push(dirPath);
+    }
+
+    found.push(...findSkillDirs(dirPath));
+  }
+
+  return found;
 }
