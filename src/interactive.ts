@@ -1,10 +1,20 @@
 import * as p from '@clack/prompts';
 import chalk from 'chalk';
+import { existsSync, readdirSync } from 'fs';
 import { detectInstalledAgents, getAllAgents } from './agents';
 import { discoverCommands, discoverSkills } from './discovery';
 import { createSymlinks } from './symlink';
-import { displayReport } from './utils';
+import { displayReport, expandHome } from './utils';
 import type { Command, Skill, Agent } from './types';
+
+function readCategories(agent: Agent, scope: 'global' | 'project'): string[] {
+  const dir = expandHome(scope === 'global' ? agent.globalSkillsDir : agent.projectSkillsDir);
+  if (!existsSync(dir)) return [];
+  return readdirSync(dir, { withFileTypes: true })
+    .filter(d => d.isDirectory())
+    .map(d => d.name)
+    .sort();
+}
 
 export async function runInteractiveFlow(): Promise<void> {
   p.intro(chalk.bgCyan(' alink '));
@@ -185,12 +195,60 @@ export async function runInteractiveFlow(): Promise<void> {
     process.exit(0);
   }
 
-  // Step 5: Show summary
+  // Step 5: Pick category for category-enabled agents (skills only)
+  const categoryByAgent = new Map<string, string>();
+  const hasSkills = selectedResources.some(r => r.type === 'skill');
+  if (hasSkills) {
+    for (const agent of selectedAgents) {
+      if (!agent.categories) continue;
+
+      const existing = readCategories(agent, scope as 'global' | 'project');
+      const NEW = '__new__';
+      const options = [
+        ...existing.map(c => ({ value: c, label: c })),
+        { value: NEW, label: chalk.cyan('+ New category...') }
+      ];
+
+      let category: string | symbol;
+      if (existing.length === 0) {
+        category = NEW;
+      } else {
+        category = await p.select({
+          message: `Select category for ${agent.displayName} skills:`,
+          options
+        });
+        if (p.isCancel(category)) {
+          p.cancel('Operation cancelled');
+          process.exit(0);
+        }
+      }
+
+      if (category === NEW) {
+        const name = await p.text({
+          message: `New category name for ${agent.displayName}:`,
+          validate: v => (v && v.trim() ? undefined : 'Category name required')
+        });
+        if (p.isCancel(name)) {
+          p.cancel('Operation cancelled');
+          process.exit(0);
+        }
+        category = (name as string).trim();
+      }
+
+      categoryByAgent.set(agent.name, category as string);
+    }
+  }
+
+  // Step 6: Show summary
   console.log('');
+  const categoryLines = selectedAgents
+    .filter(a => categoryByAgent.has(a.name))
+    .map(a => `  ${a.displayName} → ${categoryByAgent.get(a.name)}`);
   p.note(
     `Resources: ${selectedResources.length}\n` +
     `Agents: ${selectedAgents.map(a => a.displayName).join(', ')}\n` +
     `Scope: ${scope}\n` +
+    (categoryLines.length ? `Categories:\n${categoryLines.join('\n')}\n` : '') +
     `Total symlinks: ${selectedResources.length * selectedAgents.length}`,
     'Summary'
   );
@@ -207,7 +265,7 @@ export async function runInteractiveFlow(): Promise<void> {
 
   // Step 7: Create symlinks
   spinner.start('Creating symlinks...');
-  const results = await createSymlinks(selectedResources, selectedAgents, scope as 'global' | 'project');
+  const results = await createSymlinks(selectedResources, selectedAgents, scope as 'global' | 'project', categoryByAgent);
   spinner.stop('Symlinks created');
 
   // Step 8: Display report

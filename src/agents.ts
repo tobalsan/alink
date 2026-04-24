@@ -11,6 +11,7 @@ export const AGENTS: Agent[] = [
     projectSkillsDir: '.claude/skills',
     globalCommandsDir: '~/.claude/commands',
     globalSkillsDir: '~/.claude/skills',
+    categories: false,
     detectInstalled: () => existsSync(expandHome('~/.claude'))
   },
   {
@@ -20,6 +21,7 @@ export const AGENTS: Agent[] = [
     projectSkillsDir: '.cline/skills',
     globalCommandsDir: '~/.cline/commands',
     globalSkillsDir: '~/.cline/skills',
+    categories: false,
     detectInstalled: () => existsSync(expandHome('~/.cline'))
   },
   {
@@ -29,6 +31,7 @@ export const AGENTS: Agent[] = [
     projectSkillsDir: '.cursor/skills',
     globalCommandsDir: '~/.cursor/commands',
     globalSkillsDir: '~/.cursor/skills',
+    categories: false,
     detectInstalled: () => existsSync(expandHome('~/.cursor'))
   },
   {
@@ -38,6 +41,7 @@ export const AGENTS: Agent[] = [
     projectSkillsDir: '.codex/skills',
     globalCommandsDir: '~/.codex/prompts',
     globalSkillsDir: '~/.codex/skills',
+    categories: false,
     detectInstalled: () => existsSync(expandHome('~/.codex'))
   },
   {
@@ -47,6 +51,7 @@ export const AGENTS: Agent[] = [
     projectSkillsDir: '.amp/skills',
     globalCommandsDir: '~/.amp/commands',
     globalSkillsDir: '~/.amp/skills',
+    categories: false,
     detectInstalled: () => existsSync(expandHome('~/.amp'))
   },
   {
@@ -56,6 +61,7 @@ export const AGENTS: Agent[] = [
     projectSkillsDir: '.antigravity/skills',
     globalCommandsDir: '~/.antigravity/commands',
     globalSkillsDir: '~/.antigravity/skills',
+    categories: false,
     detectInstalled: () => existsSync(expandHome('~/.antigravity'))
   },
   {
@@ -65,6 +71,7 @@ export const AGENTS: Agent[] = [
     projectSkillsDir: '.openclaw/skills',
     globalCommandsDir: '~/.openclaw/commands',
     globalSkillsDir: '~/.openclaw/skills',
+    categories: false,
     detectInstalled: () => existsSync(expandHome('~/.openclaw'))
   },
   {
@@ -74,6 +81,7 @@ export const AGENTS: Agent[] = [
     projectSkillsDir: '.command-code/skills',
     globalCommandsDir: '~/.command-code/commands',
     globalSkillsDir: '~/.command-code/skills',
+    categories: false,
     detectInstalled: () => existsSync(expandHome('~/.command-code'))
   },
   {
@@ -83,6 +91,7 @@ export const AGENTS: Agent[] = [
     projectSkillsDir: '.factory/skills',
     globalCommandsDir: '~/.factory/commands',
     globalSkillsDir: '~/.factory/skills',
+    categories: false,
     detectInstalled: () => existsSync(expandHome('~/.factory'))
   },
   {
@@ -92,6 +101,7 @@ export const AGENTS: Agent[] = [
     projectSkillsDir: '.gemini/skills',
     globalCommandsDir: '~/.gemini/commands',
     globalSkillsDir: '~/.gemini/skills',
+    categories: false,
     detectInstalled: () => existsSync(expandHome('~/.gemini'))
   },
   {
@@ -101,6 +111,7 @@ export const AGENTS: Agent[] = [
     projectSkillsDir: '.goose/skills',
     globalCommandsDir: '~/.goose/commands',
     globalSkillsDir: '~/.goose/skills',
+    categories: false,
     detectInstalled: () => existsSync(expandHome('~/.goose'))
   },
   {
@@ -110,6 +121,7 @@ export const AGENTS: Agent[] = [
     projectSkillsDir: '.kilo/skills',
     globalCommandsDir: '~/.kilo/commands',
     globalSkillsDir: '~/.kilo/skills',
+    categories: false,
     detectInstalled: () => existsSync(expandHome('~/.kilo'))
   },
   {
@@ -119,6 +131,7 @@ export const AGENTS: Agent[] = [
     projectSkillsDir: '.kiro/skills',
     globalCommandsDir: '~/.kiro/commands',
     globalSkillsDir: '~/.kiro/skills',
+    categories: false,
     detectInstalled: () => existsSync(expandHome('~/.kiro'))
   },
   {
@@ -128,6 +141,7 @@ export const AGENTS: Agent[] = [
     projectSkillsDir: '.neovate/skills',
     globalCommandsDir: '~/.neovate/commands',
     globalSkillsDir: '~/.neovate/skills',
+    categories: false,
     detectInstalled: () => existsSync(expandHome('~/.neovate'))
   },
   {
@@ -137,6 +151,7 @@ export const AGENTS: Agent[] = [
     projectSkillsDir: '.opencode/skills',
     globalCommandsDir: '~/.config/opencode/commands',
     globalSkillsDir: '~/.config/opencode/skills',
+    categories: false,
     detectInstalled: () => existsSync(expandHome('~/.config/opencode'))
   },
   {
@@ -146,6 +161,7 @@ export const AGENTS: Agent[] = [
     projectSkillsDir: '.openhands/skills',
     globalCommandsDir: '~/.openhands/commands',
     globalSkillsDir: '~/.openhands/skills',
+    categories: false,
     detectInstalled: () => existsSync(expandHome('~/.openhands'))
   },
   {
@@ -155,6 +171,7 @@ export const AGENTS: Agent[] = [
     projectSkillsDir: '.pi/skills',
     globalCommandsDir: '~/.pi/agent/prompts',
     globalSkillsDir: '~/.pi/agent/skills',
+    categories: false,
     detectInstalled: () => existsSync(expandHome('~/.pi'))
   },
   {
@@ -164,6 +181,7 @@ export const AGENTS: Agent[] = [
     projectSkillsDir: '.qoder/skills',
     globalCommandsDir: '~/.qoder/commands',
     globalSkillsDir: '~/.qoder/skills',
+    categories: false,
     detectInstalled: () => existsSync(expandHome('~/.qoder'))
   },
   {
@@ -173,6 +191,7 @@ export const AGENTS: Agent[] = [
     projectSkillsDir: '.roo-code/skills',
     globalCommandsDir: '~/.roo-code/commands',
     globalSkillsDir: '~/.roo-code/skills',
+    categories: false,
     detectInstalled: () => existsSync(expandHome('~/.roo-code'))
   },
   {
@@ -182,6 +201,7 @@ export const AGENTS: Agent[] = [
     projectSkillsDir: '.trae/skills',
     globalCommandsDir: '~/.trae/commands',
     globalSkillsDir: '~/.trae/skills',
+    categories: false,
     detectInstalled: () => existsSync(expandHome('~/.trae'))
   },
   {
@@ -191,6 +211,7 @@ export const AGENTS: Agent[] = [
     projectSkillsDir: '.windsurf/skills',
     globalCommandsDir: '~/.windsurf/commands',
     globalSkillsDir: '~/.windsurf/skills',
+    categories: false,
     detectInstalled: () => existsSync(expandHome('~/.windsurf'))
   },
   {
@@ -200,6 +221,7 @@ export const AGENTS: Agent[] = [
     projectSkillsDir: '.zencoder/skills',
     globalCommandsDir: '~/.zencoder/commands',
     globalSkillsDir: '~/.zencoder/skills',
+    categories: false,
     detectInstalled: () => existsSync(expandHome('~/.zencoder'))
   },
   {
@@ -209,6 +231,7 @@ export const AGENTS: Agent[] = [
     projectSkillsDir: '.github-copilot/skills',
     globalCommandsDir: '~/.github-copilot/commands',
     globalSkillsDir: '~/.github-copilot/skills',
+    categories: false,
     detectInstalled: () => existsSync(expandHome('~/.github-copilot'))
   }
 ];
@@ -230,6 +253,7 @@ function createCustomAgents(): Agent[] {
       projectSkillsDir: `.${normalizedName}/skills`,
       globalCommandsDir: `${basePath}/commands`,
       globalSkillsDir: `${basePath}/skills`,
+      categories: customAgent.categories ?? false,
       detectInstalled: () => existsSync(expandHome(basePath))
     };
   });

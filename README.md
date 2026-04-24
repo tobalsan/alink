@@ -63,6 +63,18 @@ bun run src/index.ts
 - Zencoder
 - GitHub Copilot
 
+## Custom Agents (`~/.alink/config.json`)
+
+```json
+{
+  "customAgents": [
+    { "name": "Hermes", "path": "~/.hermes", "categories": true }
+  ]
+}
+```
+
+- `categories: true` — agent organizes skills by category subdirectory (e.g. `~/.hermes/skills/<category>/<skill>`). When selected, alink prompts for a category per run, listing existing categories found on disk plus an option to add a new one. Defaults to `false`.
+
 ## Directory Structure
 
 ```

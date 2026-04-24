@@ -5,6 +5,7 @@ export interface Agent {
   projectSkillsDir: string;
   globalCommandsDir: string;
   globalSkillsDir: string;
+  categories: boolean;
   detectInstalled: () => boolean;
 }
 
@@ -35,6 +36,7 @@ export interface SymlinkResult {
 export interface CustomAgentConfig {
   name: string;
   path: string;
+  categories?: boolean;
 }
 
 export interface AlinkConfig {

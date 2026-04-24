@@ -6,13 +6,17 @@ import type { Command, Skill, SymlinkResult, Agent } from './types';
 export async function createSymlinks(
   resources: Array<{ type: 'command' | 'skill'; resource: Command | Skill }>,
   agents: Agent[],
-  scope: 'global' | 'project'
+  scope: 'global' | 'project',
+  categoryByAgent: Map<string, string> = new Map()
 ): Promise<SymlinkResult[]> {
   const results: SymlinkResult[] = [];
 
   for (const agent of agents) {
     for (const { type, resource } of resources) {
-      const result = await createSymlink(agent, type, resource, scope);
+      const category = type === 'skill' && agent.categories
+        ? categoryByAgent.get(agent.name)
+        : undefined;
+      const result = await createSymlink(agent, type, resource, scope, category);
       results.push(result);
     }
   }
@@ -24,14 +28,17 @@ async function createSymlink(
   agent: Agent,
   type: 'command' | 'skill',
   resource: Command | Skill,
-  scope: 'global' | 'project'
+  scope: 'global' | 'project',
+  category?: string
 ): Promise<SymlinkResult> {
   const source = resource.path;
   const targetDir = getTargetDir(agent, type, scope);
-  const targetPath = join(
-    expandHome(targetDir),
-    type === 'command' ? (resource as Command).fileName : (resource as Skill).dirName
-  );
+  const leaf = type === 'command'
+    ? (resource as Command).fileName
+    : (resource as Skill).dirName;
+  const targetPath = category
+    ? join(expandHome(targetDir), category, leaf)
+    : join(expandHome(targetDir), leaf);
 
   try {
     // Create target directory if it doesn't exist
