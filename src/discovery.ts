@@ -1,5 +1,6 @@
 import { readdirSync, statSync, readFileSync, existsSync } from 'fs';
 import { basename, join, relative } from 'path';
+import { loadConfig } from './config';
 import { expandHome } from './utils';
 import type { Command, Skill } from './types';
 
@@ -34,7 +35,8 @@ export async function discoverCommands(): Promise<Command[]> {
 }
 
 export async function discoverSkills(): Promise<Skill[]> {
-  const skillsDir = expandHome('~/.agents/skills');
+  const config = loadConfig();
+  const skillsDir = expandHome(config.skillsDir || '~/.agents/.skills');
 
   if (!existsSync(skillsDir)) {
     return [];

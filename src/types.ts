@@ -6,6 +6,8 @@ export interface Agent {
   globalCommandsDir: string;
   globalSkillsDir: string;
   categories: boolean;
+  supportsCommands?: boolean;
+  supportsSkills?: boolean;
   detectInstalled: () => boolean;
 }
 
@@ -40,5 +42,6 @@ export interface CustomAgentConfig {
 }
 
 export interface AlinkConfig {
+  skillsDir?: string;
   customAgents?: CustomAgentConfig[];
 }

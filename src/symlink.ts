@@ -13,6 +13,9 @@ export async function createSymlinks(
 
   for (const agent of agents) {
     for (const { type, resource } of resources) {
+      if (type === 'command' && agent.supportsCommands === false) continue;
+      if (type === 'skill' && agent.supportsSkills === false) continue;
+
       const category = type === 'skill' && agent.categories
         ? categoryByAgent.get(agent.name)
         : undefined;

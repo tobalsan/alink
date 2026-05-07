@@ -1,7 +1,7 @@
 import * as p from '@clack/prompts';
 import chalk from 'chalk';
 import { existsSync, readdirSync } from 'fs';
-import { detectInstalledAgents, getAllAgents } from './agents';
+import { STANDARD_SKILLS_AGENT, detectInstalledAgents, getAllAgents } from './agents';
 import { discoverCommands, discoverSkills } from './discovery';
 import { createSymlinks } from './symlink';
 import { displayReport, expandHome } from './utils';
@@ -154,14 +154,22 @@ export async function runInteractiveFlow(): Promise<void> {
   const installedAgents = detectInstalledAgents();
   spinner.stop(`Found ${installedAgents.length} installed agent${installedAgents.length === 1 ? '' : 's'}`);
 
-  if (installedAgents.length === 0) {
+  const hasSkills = selectedResources.some(r => r.type === 'skill');
+  const targetAgents = hasSkills
+    ? [STANDARD_SKILLS_AGENT, ...installedAgents]
+    : installedAgents;
+
+  if (targetAgents.length === 0) {
     p.outro(chalk.yellow('No agents detected. Install an agent first.'));
     process.exit(0);
   }
 
-  const agentOptions = installedAgents.map(agent => ({
+  const agentOptions = targetAgents.map(agent => ({
     value: agent.name,
-    label: agent.displayName
+    label: agent.displayName,
+    hint: agent.name === STANDARD_SKILLS_AGENT.name
+      ? 'Standard convention (~/.agents/skills or .agents/skills)'
+      : undefined
   }));
 
   const selectedAgentNames = await p.multiselect({
@@ -179,7 +187,10 @@ export async function runInteractiveFlow(): Promise<void> {
     process.exit(0);
   }
 
-  const selectedAgents = getAllAgents().filter(agent => selectedAgentNames.includes(agent.name));
+  const allAgents = hasSkills
+    ? [STANDARD_SKILLS_AGENT, ...getAllAgents()]
+    : getAllAgents();
+  const selectedAgents = allAgents.filter(agent => selectedAgentNames.includes(agent.name));
 
   // Step 4: Choose scope
   const scope = await p.select({
@@ -197,7 +208,6 @@ export async function runInteractiveFlow(): Promise<void> {
 
   // Step 5: Pick category for category-enabled agents (skills only)
   const categoryByAgent = new Map<string, string>();
-  const hasSkills = selectedResources.some(r => r.type === 'skill');
   if (hasSkills) {
     for (const agent of selectedAgents) {
       if (!agent.categories) continue;
@@ -249,7 +259,7 @@ export async function runInteractiveFlow(): Promise<void> {
     `Agents: ${selectedAgents.map(a => a.displayName).join(', ')}\n` +
     `Scope: ${scope}\n` +
     (categoryLines.length ? `Categories:\n${categoryLines.join('\n')}\n` : '') +
-    `Total symlinks: ${selectedResources.length * selectedAgents.length}`,
+    `Total symlinks: ${selectedAgents.reduce((total, agent) => total + selectedResources.filter(({ type }) => type === 'skill' ? agent.supportsSkills !== false : agent.supportsCommands !== false).length, 0)}`,
     'Summary'
   );
 

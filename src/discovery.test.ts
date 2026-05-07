@@ -6,7 +6,7 @@ import { expandHome } from "./utils";
 
 describe("discoverSkills", () => {
   test("finds nested skills and flattens their target dir names", async () => {
-    const skillsRoot = expandHome("~/.agents/skills");
+    const skillsRoot = expandHome("~/.agents/.skills");
     const testRoot = join(skillsRoot, `alink-test-${Date.now()}`);
     const topLevelSkillDir = join(testRoot, "top-level");
     const nestedSkillDir = join(testRoot, "group", "nested");

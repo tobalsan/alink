@@ -1,10 +1,10 @@
 # alink - Agent Resource Linker
 
-CLI tool to symlink commands and skills from `~/.agents/` to agent config directories.
+CLI tool to symlink commands from `~/.agents/commands/` and skills from `~/.agents/.skills/` to agent config directories.
 
 ## Overview
 
-`alink` creates symlinks from centralized resources in `~/.agents/commands/` and `~/.agents/skills/` to agent-specific config directories (`.claude/`, `.cline/`, `.cursor/`, etc.) for both project and global scopes.
+`alink` creates symlinks from centralized resources in `~/.agents/commands/` and `~/.agents/.skills/` to agent-specific config directories (`.claude/`, `.cline/`, `.cursor/`, etc.) for both project and global scopes. It can also link skills into the standard convention folders (`~/.agents/skills` globally or `.agents/skills` locally).
 
 ## Installation
 
@@ -67,12 +67,14 @@ bun run src/index.ts
 
 ```json
 {
+  "skillsDir": "~/.agents/.skills",
   "customAgents": [
     { "name": "Hermes", "path": "~/.hermes", "categories": true }
   ]
 }
 ```
 
+- `skillsDir` — source directory for discovering skills recursively. Defaults to `~/.agents/.skills`.
 - `categories: true` — agent organizes skills by category subdirectory (e.g. `~/.hermes/skills/<category>/<skill>`). When selected, alink prompts for a category per run, listing existing categories found on disk plus an option to add a new one. Defaults to `false`.
 
 ## Directory Structure
@@ -83,7 +85,8 @@ bun run src/index.ts
 │   ├── commit.md
 │   ├── handoff.md
 │   └── ...
-└── skills/
+├── skills/              # optional target for standard-convention agents
+└── .skills/             # default skill source
     ├── remotion-best-practices/
     │   ├── SKILL.md
     │   └── ...
@@ -112,7 +115,7 @@ Result: All commands from `~/.agents/commands/` are symlinked to `~/.claude/comm
 5. Select "Project"
 6. Confirm
 
-Result: Selected skills are symlinked to `.agent/skills/` for each selected agent
+Result: Selected skills are symlinked to `.agent/skills/` for each selected agent (or `.agents/skills` when selecting the standard local target)
 
 ## Behavior
 

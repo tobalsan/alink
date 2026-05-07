@@ -3,6 +3,19 @@ import { expandHome } from './utils';
 import { loadConfig } from './config';
 import type { Agent } from './types';
 
+export const STANDARD_SKILLS_AGENT: Agent = {
+  name: 'standard-skills',
+  displayName: 'Standard Agents Skills',
+  projectCommandsDir: '.agents/commands',
+  projectSkillsDir: '.agents/skills',
+  globalCommandsDir: '~/.agents/commands',
+  globalSkillsDir: '~/.agents/skills',
+  categories: false,
+  supportsCommands: false,
+  supportsSkills: true,
+  detectInstalled: () => true
+};
+
 export const AGENTS: Agent[] = [
   {
     name: 'claude-code',
