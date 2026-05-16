@@ -67,6 +67,7 @@ bun run src/index.ts
 
 ```json
 {
+  "commandsDir": "~/.agents/commands",
   "skillsDir": "~/.agents/.skills",
   "customAgents": [
     { "name": "Hermes", "path": "~/.hermes", "categories": true }
@@ -74,6 +75,7 @@ bun run src/index.ts
 }
 ```
 
+- `commandsDir` — source directory for discovering commands. Defaults to `~/.agents/commands`.
 - `skillsDir` — source directory for discovering skills recursively. Defaults to `~/.agents/.skills`.
 - `categories: true` — agent organizes skills by category subdirectory (e.g. `~/.hermes/skills/<category>/<skill>`). When selected, alink prompts for a category per run, listing existing categories found on disk plus an option to add a new one. Defaults to `false`.
 

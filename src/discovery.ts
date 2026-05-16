@@ -5,7 +5,8 @@ import { expandHome } from './utils';
 import type { Command, Skill } from './types';
 
 export async function discoverCommands(): Promise<Command[]> {
-  const commandsDir = expandHome('~/.agents/commands');
+  const config = loadConfig();
+  const commandsDir = expandHome(config.commandsDir || '~/.agents/commands');
 
   if (!existsSync(commandsDir)) {
     return [];

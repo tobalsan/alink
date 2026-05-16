@@ -14,7 +14,9 @@ export function loadConfig(): AlinkConfig {
   try {
     const content = readFileSync(configPath, 'utf-8');
     return JSON.parse(content);
-  } catch {
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    console.warn(`Failed to load ${configPath}: ${message}`);
     return {};
   }
 }

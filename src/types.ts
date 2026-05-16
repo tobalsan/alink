@@ -42,6 +42,7 @@ export interface CustomAgentConfig {
 }
 
 export interface AlinkConfig {
+  commandsDir?: string;
   skillsDir?: string;
   customAgents?: CustomAgentConfig[];
 }
