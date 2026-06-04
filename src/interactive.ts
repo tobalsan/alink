@@ -23,9 +23,9 @@ export async function runInteractiveFlow(): Promise<void> {
   const resourceType = await p.select({
     message: 'What do you want to symlink?',
     options: [
-      { value: 'commands', label: 'Commands' },
       { value: 'skills', label: 'Skills' },
-      { value: 'both', label: 'Both commands and skills' }
+      { value: 'commands', label: 'Commands' },
+      { value: 'both', label: 'Both skills and commands' }
     ]
   });
 
@@ -249,7 +249,21 @@ export async function runInteractiveFlow(): Promise<void> {
     }
   }
 
-  // Step 6: Show summary
+  // Step 6: Choose link mode
+  const mode = await p.select({
+    message: 'Symlink or copy?',
+    options: [
+      { value: 'symlink', label: 'Symlink', hint: 'Default — stays in sync with source' },
+      { value: 'copy', label: 'Copy', hint: 'Independent copy' }
+    ]
+  });
+
+  if (p.isCancel(mode)) {
+    p.cancel('Operation cancelled');
+    process.exit(0);
+  }
+
+  // Step 7: Show summary
   console.log('');
   const categoryLines = selectedAgents
     .filter(a => categoryByAgent.has(a.name))
@@ -263,9 +277,9 @@ export async function runInteractiveFlow(): Promise<void> {
     'Summary'
   );
 
-  // Step 6: Confirm
+  // Step 8: Confirm
   const confirm = await p.confirm({
-    message: 'Proceed with creating symlinks?'
+    message: `Proceed with creating ${mode === 'copy' ? 'copies' : 'symlinks'}?`
   });
 
   if (p.isCancel(confirm) || !confirm) {
@@ -273,12 +287,12 @@ export async function runInteractiveFlow(): Promise<void> {
     process.exit(0);
   }
 
-  // Step 7: Create symlinks
-  spinner.start('Creating symlinks...');
-  const results = await createSymlinks(selectedResources, selectedAgents, scope as 'global' | 'project', categoryByAgent);
-  spinner.stop('Symlinks created');
+  // Step 9: Create symlinks/copies
+  spinner.start(mode === 'copy' ? 'Copying...' : 'Creating symlinks...');
+  const results = await createSymlinks(selectedResources, selectedAgents, scope as 'global' | 'project', categoryByAgent, mode as 'symlink' | 'copy');
+  spinner.stop(mode === 'copy' ? 'Copies created' : 'Symlinks created');
 
-  // Step 8: Display report
+  // Step 10: Display report
   displayReport(results);
 
   p.outro(chalk.green('Done!'));

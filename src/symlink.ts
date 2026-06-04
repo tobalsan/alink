@@ -1,4 +1,4 @@
-import { existsSync, mkdirSync, symlinkSync, unlinkSync, lstatSync, readlinkSync } from 'fs';
+import { existsSync, mkdirSync, symlinkSync, unlinkSync, lstatSync, readlinkSync, rmSync, cpSync } from 'fs';
 import { dirname, join } from 'path';
 import { expandHome } from './utils';
 import type { Command, Skill, SymlinkResult, Agent } from './types';
@@ -7,7 +7,8 @@ export async function createSymlinks(
   resources: Array<{ type: 'command' | 'skill'; resource: Command | Skill }>,
   agents: Agent[],
   scope: 'global' | 'project',
-  categoryByAgent: Map<string, string> = new Map()
+  categoryByAgent: Map<string, string> = new Map(),
+  mode: 'symlink' | 'copy' = 'symlink'
 ): Promise<SymlinkResult[]> {
   const results: SymlinkResult[] = [];
 
@@ -19,7 +20,7 @@ export async function createSymlinks(
       const category = type === 'skill' && agent.categories
         ? categoryByAgent.get(agent.name)
         : undefined;
-      const result = await createSymlink(agent, type, resource, scope, category);
+      const result = await createSymlink(agent, type, resource, scope, category, mode);
       results.push(result);
     }
   }
@@ -32,7 +33,8 @@ async function createSymlink(
   type: 'command' | 'skill',
   resource: Command | Skill,
   scope: 'global' | 'project',
-  category?: string
+  category?: string,
+  mode: 'symlink' | 'copy' = 'symlink'
 ): Promise<SymlinkResult> {
   const source = resource.path;
   const targetDir = getTargetDir(agent, type, scope);
@@ -54,7 +56,7 @@ async function createSymlink(
     if (existsSync(targetPath)) {
       const stats = lstatSync(targetPath);
 
-      if (stats.isSymbolicLink()) {
+      if (mode === 'symlink' && stats.isSymbolicLink()) {
         const currentTarget = readlinkSync(targetPath);
 
         // Already points to correct source
@@ -70,7 +72,21 @@ async function createSymlink(
 
         // Points to different source - replace it
         unlinkSync(targetPath);
-        symlinkSync(source, targetPath, type === 'command' ? 'file' : 'dir');
+        place(source, targetPath, type, mode);
+
+        return {
+          success: true,
+          source,
+          target: targetPath,
+          agent: agent.displayName,
+          action: 'replaced'
+        };
+      }
+
+      // Copy mode replaces any existing target; symlink mode refuses non-symlinks
+      if (mode === 'copy') {
+        rmSync(targetPath, { recursive: true, force: true });
+        place(source, targetPath, type, mode);
 
         return {
           success: true,
@@ -92,8 +108,8 @@ async function createSymlink(
       };
     }
 
-    // Create new symlink
-    symlinkSync(source, targetPath, type === 'command' ? 'file' : 'dir');
+    // Create new symlink/copy
+    place(source, targetPath, type, mode);
 
     return {
       success: true,
@@ -111,6 +127,14 @@ async function createSymlink(
       action: 'error',
       error: error instanceof Error ? error.message : 'Unknown error'
     };
+  }
+}
+
+function place(source: string, targetPath: string, type: 'command' | 'skill', mode: 'symlink' | 'copy'): void {
+  if (mode === 'copy') {
+    cpSync(source, targetPath, { recursive: type === 'skill' });
+  } else {
+    symlinkSync(source, targetPath, type === 'command' ? 'file' : 'dir');
   }
 }
 
